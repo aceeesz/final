@@ -6,6 +6,7 @@ import numpy as np
 # Load the trained model
 model = load_model('finaltrain.h5')
 
+# Function to make predictions
 def predict(input_data):
     return model.predict(input_data)
 
@@ -14,6 +15,8 @@ st.title("My Keras Model Prediction App")
 
 # Input fields for user data
 st.header("Enter input data for prediction")
+
+# Assuming your model takes three numerical inputs
 input1 = st.number_input("Input 1", value=0.0)
 input2 = st.number_input("Input 2", value=0.0)
 input3 = st.number_input("Input 3", value=0.0)
