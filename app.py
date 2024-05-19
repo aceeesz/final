@@ -2,29 +2,44 @@ import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import numpy as np
+from sklearn.metrics import mean_squared_error, mean_absolute_error
+from PIL import Image
 
 # Load the trained model
 model = load_model('finaltrain.h5')
 
+# Function to preprocess the input image
+def preprocess_image(image, target_size=(64, 64)):
+    image = image.resize(target_size)
+    image = np.array(image)
+    image = image / 255.0  # Normalize the image
+    image = np.expand_dims(image, axis=0)  # Add batch dimension
+    return image
+
 # Function to make predictions
-def predict(input_data):
-    return model.predict(input_data)
+def predict(image):
+    processed_image = preprocess_image(image)
+    return model.predict(processed_image)
 
 # Streamlit app
-st.title("My Keras Model Prediction App")
+st.title("Final Exam: Model Deployment in the Cloud")
 
-# Input fields for user data
-st.header("Enter input data for prediction")
+# Upload image
+uploaded_file = st.file_uploader("Upload a weather image", type=["jpg", "png", "jpeg"])
 
-# Assuming your model takes three numerical inputs
-input1 = st.number_input("Input 1", value=0.0)
-input2 = st.number_input("Input 2", value=0.0)
-input3 = st.number_input("Input 3", value=0.0)
+if uploaded_file is not None:
+    # Display the uploaded image
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Uploaded Image", use_column_width=True)
 
-# Make a numpy array from the inputs
-input_data = np.array([[input1, input2, input3]])
+    # Make prediction
+    prediction = predict(image)
+    predicted_temperature = prediction[0][0]  # Assuming the model outputs temperature
 
-# When the user clicks the 'Predict' button
-if st.button("Predict"):
-    prediction = predict(input_data)
-    st.write(f"The predicted value is: {prediction[0][0]}")
+
+# Instructions for the user
+st.markdown("""
+### Instructions:
+1. Upload the weather image (jpg, png, jpeg).
+3. Click "Calculate Accuracy" to see how well the model predicts the temperature.
+""")
