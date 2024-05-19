@@ -2,18 +2,19 @@ import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import numpy as np
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 # Load the trained model
 model = load_model('finaltrain.h5')
 class_names = ['Rain', 'Shine', 'Cloudy', 'Sunrise']
 
 # Function to preprocess the input image
-def preprocess_image(image, target_size=(60, 40)):
+def preprocess_image(image, target_size=(40, 60)):
     image = image.resize(target_size)
+    image = image.convert('RGB')  # Ensure the image is in RGB mode
     image = np.array(image)
     image = image / 255.0  # Normalize the image
-    image = np.expand_dims(image, axis=0)  # Add batch dimension
+    image = image.reshape((1, -1))  # Flatten the image to a 1D array
     return image
 
 # Function to make predictions
@@ -28,17 +29,31 @@ st.title("Final Exam: Model Deployment in the Cloud")
 uploaded_file = st.file_uploader("Upload a weather image", type=["jpg", "png", "jpeg"])
 
 if uploaded_file is not None:
-    # Display the uploaded image
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+    try:
+        # Read the image file
+        image = Image.open(uploaded_file)
+        
+        # Display the uploaded image
+        st.image(image, caption="Uploaded Image", use_column_width=True)
 
-    # Make prediction
-    prediction = predict(image)
-    predicted_class_index = np.argmax(prediction, axis=1)[0]
-    predicted_class = class_names[predicted_class_index]
+        # Make prediction
+        prediction = predict(image)
+        predicted_class_index = np.argmax(prediction, axis=1)[0]
+        predicted_class = class_names[predicted_class_index]
 
-    # Display the prediction
-    st.success(f"Prediction: {predicted_class}")
+        # Display the prediction
+        st.success(f"Prediction: {predicted_class}")
+
+    except UnidentifiedImageError:
+        st.error("The uploaded file could not be identified as an image. Please upload a valid image file.")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        st.write("Debugging information:")
+        st.write(str(e))
+        st.write("Uploaded file details:")
+        st.write(f"File name: {uploaded_file.name}")
+        st.write(f"File type: {uploaded_file.type}")
+        st.write(f"File size: {uploaded_file.size}")
 
 # Instructions for the user
 st.markdown("""
