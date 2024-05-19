@@ -47,14 +47,7 @@ if uploaded_file is not None:
 
     except UnidentifiedImageError:
         st.error("The uploaded file could not be identified as an image. Please upload a valid image file.")
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
-        st.write("Debugging information:")
-        st.write(str(e))
-        st.write("Uploaded file details:")
-        st.write(f"File name: {uploaded_file.name}")
-        st.write(f"File type: {uploaded_file.type}")
-        st.write(f"File size: {uploaded_file.size}")
+ 
 
 # Instructions for the user
 st.markdown("""
