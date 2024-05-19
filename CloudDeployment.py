@@ -11,7 +11,7 @@ from keras.models import load_model
 
 st.title("Finals Exam: Cloud Deployment")
 
-model = load_model('CNN.h5')
+model = load_model('finaltrain.h5')
 file = st.file_uploader("Upload File Here", type = ["png","jpeg","jpg"])
 classification = {
     0: "Cloudy", 1: "Rain", 2: "Sunrise", 3:"Shine"}
