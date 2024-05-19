@@ -3,7 +3,6 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image, UnidentifiedImageError
-import os
 
 # Load the trained model
 model = load_model('finaltrain.h5')
@@ -15,6 +14,7 @@ def preprocess_image(image, target_size=(60, 40)):
     image = image.convert('RGB')  # Ensure the image is in RGB mode
     image = np.array(image)
     image = image / 255.0  # Normalize the image
+    image = image.flatten()  # Flatten the image to a 1D array
     image = np.expand_dims(image, axis=0)  # Add batch dimension
     return image
 
@@ -32,7 +32,7 @@ uploaded_file = st.file_uploader("Upload a weather image", type=["jpg", "png", "
 if uploaded_file is not None:
     try:
         # Save the uploaded file locally for inspection
-        with open(os.path.join("/tmp", uploaded_file.name), "wb") as f:
+        with open(f"/tmp/{uploaded_file.name}", "wb") as f:
             f.write(uploaded_file.getbuffer())
         st.write(f"File {uploaded_file.name} saved locally for inspection.")
 
