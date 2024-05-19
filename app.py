@@ -6,7 +6,8 @@ from PIL import Image
 
 # Load the trained model
 model = load_model('finaltrain.h5')
-class_names=['Rain','Shine','Cloudy','Sunrise']
+class_names = ['Rain', 'Shine', 'Cloudy', 'Sunrise']
+
 # Function to preprocess the input image
 def preprocess_image(image, target_size=(60, 40)):
     image = image.resize(target_size)
@@ -32,19 +33,16 @@ if uploaded_file is not None:
     st.image(image, caption="Uploaded Image", use_column_width=True)
 
     # Make prediction
-    
     prediction = predict(image)
-    predicted_samp = np.argmax(prediction, axis=1)[0]
-    
-    if predict_class in classification:
-        predict = classification[predict_class]
-        st.success(f"Prediction: {predict}")
-    else:
-        st.warning("Cannot Predict")
+    predicted_class_index = np.argmax(prediction, axis=1)[0]
+    predicted_class = class_names[predicted_class_index]
+
+    # Display the prediction
+    st.success(f"Prediction: {predicted_class}")
 
 # Instructions for the user
 st.markdown("""
 ### Instructions:
 1. Upload the weather image (jpg, png, jpeg).
-3. Click "Calculate Accuracy" to see how well the model predicts the temperature.
+2. Wait for the prediction to be displayed.
 """)
