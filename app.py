@@ -4,11 +4,9 @@ from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image, UnidentifiedImageError
 
-# Load the trained model
 model = load_model('finaltrain.h5')
 class_names = ['Rain', 'Shine', 'Cloudy', 'Sunrise']
 
-# Function to preprocess the input image
 def preprocess_image(image, target_size=(40, 60)):
     image = image.resize(target_size)
     image = image.convert('L')  # Convert to grayscale
@@ -18,47 +16,33 @@ def preprocess_image(image, target_size=(40, 60)):
     image = np.expand_dims(image, axis=0)  # Add batch dimension
     return image
 
-# Function to make predictions
 def predict(image):
     p_image = preprocess_image(image)
     return model.predict(p_image)
 
-# Streamlit app
 st.title("Final Exam: Model Deployment in the Cloud")
-
-# Upload image
 uploaded_file = st.file_uploader("Upload a weather image", type=["jpg", "png", "jpeg"])
 
 if uploaded_file is not None:
     try:
-        # Read the image file
         image = Image.open(uploaded_file)
-        
-        # Display the uploaded image
         st.image(image, caption="Uploaded Image", use_column_width=True)
-
-        # Make prediction
         prediction = predict(image)
         probabilities = prediction[0]  # Get the probabilities for each class
         predicted_classes = [class_names[i] for i in range(len(class_names))]
         predicted_results = dict(zip(predicted_classes, probabilities))
 
-        # Display the prediction probabilities
         for class_name, probability in predicted_results.items():
             st.write(f"{class_name}: {probability}")
-
-        # Get the predicted class
+            
         predicted_class_index = np.argmax(prediction, axis=1)[0]
         predicted_class = class_names[predicted_class_index]
 
-        # Display the predicted class
         st.success(f"Prediction: {predicted_class}")
 
     except UnidentifiedImageError:
         st.error("The uploaded file could not be identified as an image. Please upload a valid image file.")
  
-
-# Instructions for the user
 st.markdown("""
 ### Instructions:
 1. Upload the weather image (jpg, png, jpeg).
