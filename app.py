@@ -33,7 +33,7 @@ if uploaded_file is not None:
 
     # Make prediction
     
-    prediction = model.predict(image)
+    prediction = predict(image)
     predicted_samp = np.argmax(prediction, axis=1)[0]
     
     if predict_class in classification:
