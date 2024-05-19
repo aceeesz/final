@@ -3,6 +3,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image, UnidentifiedImageError
+import os
 
 # Load the trained model
 model = load_model('finaltrain.h5')
@@ -30,9 +31,14 @@ uploaded_file = st.file_uploader("Upload a weather image", type=["jpg", "png", "
 
 if uploaded_file is not None:
     try:
+        # Save the uploaded file locally for inspection
+        with open(os.path.join("/tmp", uploaded_file.name), "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        st.write(f"File {uploaded_file.name} saved locally for inspection.")
+
         # Read the image file
         image = Image.open(uploaded_file)
-        
+
         # Display the uploaded image
         st.image(image, caption="Uploaded Image", use_column_width=True)
 
@@ -48,6 +54,12 @@ if uploaded_file is not None:
         st.error("The uploaded file could not be identified as an image. Please upload a valid image file.")
     except Exception as e:
         st.error(f"An error occurred: {e}")
+        st.write("Debugging information:")
+        st.write(str(e))
+        st.write("Uploaded file details:")
+        st.write(f"File name: {uploaded_file.name}")
+        st.write(f"File type: {uploaded_file.type}")
+        st.write(f"File size: {uploaded_file.size}")
 
 # Instructions for the user
 st.markdown("""
