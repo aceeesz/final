@@ -2,14 +2,13 @@ import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import numpy as np
-from sklearn.metrics import mean_squared_error, mean_absolute_error
 from PIL import Image
 
 # Load the trained model
 model = load_model('finaltrain.h5')
-
+class_names=['Rain','Shine','Cloudy','Sunrise']
 # Function to preprocess the input image
-def preprocess_image(image, target_size=(64, 64)):
+def preprocess_image(image, target_size=(60, 40)):
     image = image.resize(target_size)
     image = np.array(image)
     image = image / 255.0  # Normalize the image
@@ -18,8 +17,8 @@ def preprocess_image(image, target_size=(64, 64)):
 
 # Function to make predictions
 def predict(image):
-    processed_image = preprocess_image(image)
-    return model.predict(processed_image)
+    p_image = preprocess_image(image)
+    return model.predict(p_image)
 
 # Streamlit app
 st.title("Final Exam: Model Deployment in the Cloud")
@@ -33,9 +32,15 @@ if uploaded_file is not None:
     st.image(image, caption="Uploaded Image", use_column_width=True)
 
     # Make prediction
-    prediction = predict(image)
-    predicted_temperature = prediction[0][0]  # Assuming the model outputs temperature
-
+    
+    prediction = model.predict(image)
+    predicted_samp = np.argmax(prediction, axis=1)[0]
+    
+    if predict_class in classification:
+        predict = classification[predict_class]
+        st.success(f"Prediction: {predict}")
+    else:
+        st.warning("Cannot Predict")
 
 # Instructions for the user
 st.markdown("""
