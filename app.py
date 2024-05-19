@@ -11,10 +11,11 @@ class_names = ['Rain', 'Shine', 'Cloudy', 'Sunrise']
 # Function to preprocess the input image
 def preprocess_image(image, target_size=(40, 60)):
     image = image.resize(target_size)
-    image = image.convert('RGB')  # Ensure the image is in RGB mode
+    image = image.convert('L')  # Convert to grayscale
     image = np.array(image)
     image = image / 255.0  # Normalize the image
-    image = image.reshape((1, -1))  # Flatten the image to a 1D array
+    image = image.flatten()  # Flatten the image to a 1D array of size 2400
+    image = np.expand_dims(image, axis=0)  # Add batch dimension
     return image
 
 # Function to make predictions
