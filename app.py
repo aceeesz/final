@@ -39,10 +39,19 @@ if uploaded_file is not None:
 
         # Make prediction
         prediction = predict(image)
+        probabilities = prediction[0]  # Get the probabilities for each class
+        predicted_classes = [class_names[i] for i in range(len(class_names))]
+        predicted_results = dict(zip(predicted_classes, probabilities))
+
+        # Display the prediction probabilities
+        for class_name, probability in predicted_results.items():
+            st.write(f"{class_name}: {probability}")
+
+        # Get the predicted class
         predicted_class_index = np.argmax(prediction, axis=1)[0]
         predicted_class = class_names[predicted_class_index]
 
-        # Display the prediction
+        # Display the predicted class
         st.success(f"Prediction: {predicted_class}")
 
     except UnidentifiedImageError:
