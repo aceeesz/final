@@ -8,10 +8,6 @@ from PIL import Image
 model = load_model('finaltrain.h5')
 class_names = ['Rain', 'Shine', 'Cloudy', 'Sunrise']
 
-# Verify model input shape
-input_shape = model.input_shape[1:3]  # Skip the batch dimension
-st.write(f"Expected model input shape: {input_shape}")
-
 # Function to preprocess the input image
 def preprocess_image(image, target_size=(60, 40)):
     image = image.resize(target_size)
@@ -34,8 +30,13 @@ uploaded_file = st.file_uploader("Upload a weather image", type=["jpg", "png", "
 
 if uploaded_file is not None:
     try:
-        # Display the uploaded image
+        # Check the type of the uploaded file
+        st.write(f"Uploaded file type: {uploaded_file.type}")
+        
+        # Read the image file
         image = Image.open(uploaded_file)
+        
+        # Display the uploaded image
         st.image(image, caption="Uploaded Image", use_column_width=True)
 
         # Make prediction
