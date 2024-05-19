@@ -9,11 +9,11 @@ class_names = ['Rain', 'Shine', 'Cloudy', 'Sunrise']
 
 def preprocess_image(image, target_size=(40, 60)):
     image = image.resize(target_size)
-    image = image.convert('L')  # Convert to grayscale
+    image = image.convert('L')  
     image = np.array(image)
-    image = image / 255.0  # Normalize the image
-    image = image.flatten()  # Flatten the image to a 1D array of size 2400
-    image = np.expand_dims(image, axis=0)  # Add batch dimension
+    image = image / 255.0 
+    image = image.flatten()  
+    image = np.expand_dims(image, axis=0) 
     return image
 
 def predict(image):
@@ -28,7 +28,7 @@ if uploaded_file is not None:
         image = Image.open(uploaded_file)
         st.image(image, caption="Uploaded Image", use_column_width=True)
         prediction = predict(image)
-        probabilities = prediction[0]  # Get the probabilities for each class
+        probabilities = prediction[0]  
         predicted_classes = [class_names[i] for i in range(len(class_names))]
         predicted_results = dict(zip(predicted_classes, probabilities))
 
