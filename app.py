@@ -8,9 +8,14 @@ from PIL import Image
 model = load_model('finaltrain.h5')
 class_names = ['Rain', 'Shine', 'Cloudy', 'Sunrise']
 
+# Verify model input shape
+input_shape = model.input_shape[1:3]  # Skip the batch dimension
+st.write(f"Expected model input shape: {input_shape}")
+
 # Function to preprocess the input image
 def preprocess_image(image, target_size=(60, 40)):
     image = image.resize(target_size)
+    image = image.convert('RGB')  # Ensure the image is in RGB mode
     image = np.array(image)
     image = image / 255.0  # Normalize the image
     image = np.expand_dims(image, axis=0)  # Add batch dimension
@@ -28,17 +33,21 @@ st.title("Final Exam: Model Deployment in the Cloud")
 uploaded_file = st.file_uploader("Upload a weather image", type=["jpg", "png", "jpeg"])
 
 if uploaded_file is not None:
-    # Display the uploaded image
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+    try:
+        # Display the uploaded image
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Uploaded Image", use_column_width=True)
 
-    # Make prediction
-    prediction = predict(image)
-    predicted_class_index = np.argmax(prediction, axis=1)[0]
-    predicted_class = class_names[predicted_class_index]
+        # Make prediction
+        prediction = predict(image)
+        predicted_class_index = np.argmax(prediction, axis=1)[0]
+        predicted_class = class_names[predicted_class_index]
 
-    # Display the prediction
-    st.success(f"Prediction: {predicted_class}")
+        # Display the prediction
+        st.success(f"Prediction: {predicted_class}")
+
+    except Exception as e:
+        st.error(f"Error occurred: {e}")
 
 # Instructions for the user
 st.markdown("""
